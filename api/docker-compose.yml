@@ -1,0 +1,36 @@
+version: '3.8'
+services:
+  postgres:
+    container_name: postgres
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: devbook
+    ports:
+      - "5432:5432"
+    networks:
+      - dev-book
+
+  api:
+    build:
+      context: .
+    depends_on:
+      - postgres
+    environment:
+      - API_PORT=5000
+      - DB_USER=postgres
+      - DB_PASSWORD=password
+      - DB_NAME=devbook
+      - DB_HOST=postgres
+      - DB_PORT=5432 
+      - SECRET_KEY=develop
+    networks:
+      - dev-book
+    ports:
+      - "5000:5000"
+    restart: always
+
+networks:
+  dev-book:
+    driver: bridge
